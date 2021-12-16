@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+body{
+  margin: 0%;
+  user-select: none;
+}
+
+#Name {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  padding-left: 1rem;
+  padding-top: 1rem;
+  color: #B4F6FB;
+  /* animation: name-color 5s cubic-bezier(0.23, 1, 0.320, 1) infinite; */
+  font-size: x-large;
+}
+
+/* @keyframes name-color {
+  0%{color: rgb(156, 0, 0);}
+  20%{color: #B4F6FB;}
+  80%{color: #B4F6FB;}
+  100%{color: rgb(156, 0, 0);}
+} */
+
+/* gradient animated background */
+.animated-bg {
+  background: linear-gradient(227deg, #002c47, #000000);
+  background-size: 400% 400%;
+
+  -webkit-animation: AnimationName 24s ease infinite;
+  -moz-animation: AnimationName 24s ease infinite;
+  animation: AnimationName 24s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+  0%{background-position:0% 91%}
+  50%{background-position:100% 10%}
+  100%{background-position:0% 91%}
+}
+@-moz-keyframes AnimationName {
+  0%{background-position:0% 91%}
+  50%{background-position:100% 10%}
+  100%{background-position:0% 91%}
+}
+@keyframes AnimationName {
+  0%{background-position:0% 91%}
+  50%{background-position:100% 10%}
+  100%{background-position:0% 91%}
+}
+
+/* animated circles */
+.rotating-circle-norm {
+  animation: rotate-cool 10s ease-in-out infinite;
+  stroke: #B4F6FB;
+}
+
+@keyframes rotate-cool {
+  0% {stroke-dashoffset: 0%;}
+  50%{stroke-dashoffset: 100%;}
+  80%{stroke-dashoffset: -100%;}
+  100%{stroke-dashoffset: 0%;}
+}
+
+/* recording animation */
+.rotating-circle-record {
+  animation: rotate-cool-record 1s linear infinite;
+  stroke: #dc2626;
+}
+
+@keyframes rotate-cool-record {
+  0% {stroke-dashoffset: 0%;}
+  100%{stroke-dashoffset: 100%;}
+}
+
+.rotating-circle-record-stop {
+  animation: rotate-cool-record-stop 1.5s cubic-bezier(0.19, 1, 0.22, 1) 1;
+}
+
+@keyframes rotate-cool-record-stop {
+  0% {stroke-dashoffset: 0%;   stroke: #dc2626;}
+  80%{stroke:#00ff2a;}
+  100%{stroke-dashoffset: -100%; stroke: #B4F6FB;}
+}
+
+.mid-circle {
+  animation: rotate-cool-mid 10s linear infinite;
+  background-color: black;
+}
+
+@keyframes rotate-cool-mid {
+  0% {stroke-dashoffset: 0%;}
+  100%{stroke-dashoffset: 100%;}
+}
+
+.inner-circle {
+  animation: rotate-cool-inner 15s linear infinite;
+  background-color: black;
+}
+
+@keyframes rotate-cool-inner {
+  0% {stroke-dashoffset: 0%;}
+  100%{stroke-dashoffset: -100%;}
+}
+
+
+/* misc */
+#jarvis-like {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+/* three canvas */
+#webgl {
+  width: 100%;
+  height: 100%;
+  position: absolute;   
+}

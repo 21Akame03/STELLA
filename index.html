@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>STELLA</title>
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+
+        <div class="animated-bg" id="bg">
+          <div id="webgl">
+          </div>
+
+            <!-- I was too lazy and tired so i copied this work but im not a plagiarist so therefore -->
+            <!-- Find original here: https://codepen.io/fesuydev/pen/EZzxJK -->
+
+            <div style="max-width: 250px;text-align:center;margin: 0px auto;padding: 0%; display: grid;">
+              <h2 id="Name" style="font-family: 'Courier New', Courier, monospace;">J.A.R.V.I.S</h2>
+              <svg id="jarvis-like" viewbox="0 -100 200 400 ">
+                <defs>
+                  <filter id="light-circle">
+                    <feGaussianBlur result="blurred" in="SourceGraphic" stdDeviation="1" />
+                  </filter>
+                </defs>
+                <!-- circle outer -->
+                <circle cx="105" cy="105" r="100" style="fill: transparent; stroke-width: 2; stroke-dasharray: 50, 5" class="rotating-circle-norm duration-300" id="recording">
+                </circle>
+                <circle cx="105" cy="105" r="95" style="fill: transparent;stroke: #64E6EF;stroke-width: 1.5;"></circle>
+                <!-- circle dash cool :D -->
+                <circle cx="105" cy="105" r="80" style="fill: transparent; stroke: #B4F6FB; stroke-width: 10; stroke-dasharray: 2,2.29" class="mid-circle">
+                </circle>
+                <circle cx="105" cy="105" r="61" transform="rotate(0 105 105)" style="fill: transparent; stroke: #B4F6FB; stroke-width: 2; stroke-dasharray: 50, 25" class="inner-circle">
+                </circle>
+
+                <!-- circle inner -->
+                <!-- change color on speech synthesis -->
+                <circle cx="105" cy="105" r="50" style="fill: transparent; stroke-width: 15;filter: url(#light-circle);" class="duration-100  stroke-zinc-500 " id="indicator"></circle>
+
+                <circle cx="105" cy="105" r="40" style="fill: transparent; stroke: #64E6EF; stroke-width: 2"></circle>
+                <!-- triangle primary
+                <path d="M 105 120 L 130 95 L 80 95 z" style="fill: #D1FBFC; stroke: #B4F6FB; stroke-width:5"></path> -->
+              </svg>
+             </div>
+        </div>
+        <script src="js/lib/web-audio-recorder-min.js"></script>
+        <script src="js/lib/web-audio-wav.js"></script>
+        <script src="./js/wake-word.js" type="module"></script>
+    </body>
+</html>
