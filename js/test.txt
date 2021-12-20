@@ -1,0 +1,19 @@
+let audioContext = new AudioContext();
+navigator.mediaDevices.getUserMedia({audio: {sampleRate: 16000, channelCount: 1}}).then(StartgetUserMedia).catch(console.error);
+
+function StartgetUserMedia(stream) {
+    var source = audioContext.createMediaStreamSource(stream);
+
+    console.log("start")
+
+    //setup
+    let options = {
+        source: source,
+        voice_stop: function() {console.log('voice_stop');}, 
+        voice_start: function() {console.log('voice_start');}
+    }
+
+    //create VAD
+    var vad = new VAD(options);
+
+}

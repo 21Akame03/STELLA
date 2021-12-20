@@ -40,6 +40,10 @@ body{
   -webkit-animation: AnimationName 24s ease infinite;
   -moz-animation: AnimationName 24s ease infinite;
   animation: AnimationName 24s ease infinite;
+
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 
 @-webkit-keyframes AnimationName {
@@ -60,7 +64,7 @@ body{
 
 /* animated circles */
 .rotating-circle-norm {
-  animation: rotate-cool 10s ease-in-out infinite;
+  animation: rotate-cool 10s cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
   stroke: #B4F6FB;
 }
 
@@ -83,7 +87,7 @@ body{
 }
 
 .rotating-circle-record-stop {
-  animation: rotate-cool-record-stop 1.5s cubic-bezier(0.19, 1, 0.22, 1) 1;
+  animation: rotate-cool-record-stop 1.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1;
 }
 
 @keyframes rotate-cool-record-stop {
@@ -103,13 +107,25 @@ body{
 }
 
 .inner-circle {
-  animation: rotate-cool-inner 15s linear infinite;
+  animation: rotate-cool-inner 15s cubic-bezier(0.77, 0, 0.175, 1) infinite;
   background-color: black;
 }
 
 @keyframes rotate-cool-inner {
   0% {stroke-dashoffset: 0%;}
-  100%{stroke-dashoffset: -100%;}
+  50%{stroke-dashoffset: 100%;}
+  80%{stroke-dashoffset: -100%;}
+  100%{stroke-dashoffset: 0%;}
+}
+
+.triangle {
+  animation: blink-triangle 5s ease-in-out infinite;
+}
+
+@keyframes blink-triangle {
+  0% {opacity: 25%;}
+  50%{opacity: 60%;}
+  100%{opacity: 25%;}
 }
 
 
@@ -123,9 +139,12 @@ body{
   transform: translate(50%, -50%);
 }
 
-/* three canvas */
-#webgl {
-  width: 100%;
-  height: 100%;
-  position: absolute;   
+
+
+.polka-dots-bg {
+  background-image: radial-gradient(
+    rgba(158, 158, 158, 0.2) 0.5px,
+    transparent 5px
+  );
+  background-size: 4rem 4rem;
 }

@@ -15,7 +15,6 @@
     "@picovoice/picovoice-web-en-worker": "^2.0.1",
     "@picovoice/porcupine-web-en-worker": "^2.0.1",
     "@picovoice/web-voice-processor": "^2.1.2",
-    "recorder-js": "^1.0.7",
     "socket.io-client": "^4.4.0"
   }
 }

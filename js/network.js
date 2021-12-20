@@ -1,13 +1,18 @@
-import { io } from "socket.io-client";
+let socket = new WebSocket("ws://127.0.0.1:8000");
 
-const socket = io("http://127.0.0.1:8000/")
+socket.addEventListener('open', (event) => {
+    socket.send(JSON.stringify({event: "Connection"}));
+});
 
-socket.on('connect', () => {
-    console.log("connection")
+socket.addEventListener('close', (event) => {
+    console.log("disconnected")
 })
 
-socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected` ); // undefined
-});
+socket.addEventListener("message", (event) => {
+    let data = event.data;
+    // data = data.output
+    console.log(data)
+})
+
 
 export { socket }
