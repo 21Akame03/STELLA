@@ -13,7 +13,7 @@ body{
   user-select: none;
 }
 
-#Name {
+/* #Name {
   position: absolute;
   top: 50%;
   right: 50%;
@@ -21,9 +21,17 @@ body{
   padding-left: 1rem;
   padding-top: 1rem;
   color: #B4F6FB;
-  /* animation: name-color 5s cubic-bezier(0.23, 1, 0.320, 1) infinite; */
+  font-size: x-large;
+} */
+#Name {
+  position: absolute;
+  bottom: 2rem;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  color: #B4F6FB;
   font-size: x-large;
 }
+
 
 /* @keyframes name-color {
   0%{color: rgb(156, 0, 0);}
@@ -138,8 +146,6 @@ body{
   top: 50%;
   transform: translate(50%, -50%);
 }
-
-
 
 .polka-dots-bg {
   background-image: radial-gradient(

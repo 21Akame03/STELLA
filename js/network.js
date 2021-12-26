@@ -1,18 +1,35 @@
-let socket = new WebSocket("ws://127.0.0.1:8000");
+import { io } from 'socket.io-client';
+import speak from './Speech_synt';
 
-socket.addEventListener('open', (event) => {
-    socket.send(JSON.stringify({event: "Connection"}));
+// let socket = new WebSocket("ws://127.0.0.1:8000");
+
+// socket.addEventListener('open', (event) => {
+//     socket.send(JSON.stringify({event: "Connection"}));
+// });
+
+// socket.addEventListener('close', (event) => {
+//     console.log("disconnected")
+// })
+
+// socket.addEventListener("message", (event) => {
+//     let data = event.data;
+//     console.log(data)
+
+//     // if bytes data then its voice
+//     if (data instanceof Blob) {speak(data)};
+// })
+
+const socket = io("ws://localhost:8000");
+
+socket.on("connect", () => {
+
+    console.log("connected")
+    // either with send()
+    socket.send("Hello!");
 });
 
-socket.addEventListener('close', (event) => {
-    console.log("disconnected")
+socket.on('disconnect', (e) => {
+    console.log(`Disconnected: ${e}`);
 })
-
-socket.addEventListener("message", (event) => {
-    let data = event.data;
-    // data = data.output
-    console.log(data)
-})
-
 
 export { socket }

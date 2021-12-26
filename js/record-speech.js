@@ -1,19 +1,19 @@
 import { socket } from './network';
+import speak from './Speech_synt';
 
 const indicator = document.querySelector("#indicator");
 const recording_indicator = document.querySelector("#recording");
 let mediaStream, recorder;
 
 let audioContext = new AudioContext();
-navigator.mediaDevices.getUserMedia({audio: {sampleRate: 16000, channelCount: 1}}).then(stream => {
+navigator.mediaDevices.getUserMedia({audio: {sampleRate: 16000, channelCount: 1}})
+.then(stream => {
     mediaStream = stream;
 
     // start vad
     StartgetUserMedia(stream);
-
-    // create recorder 
-}
-).catch(console.error);
+})
+.catch(console.error);
 
 function StartgetUserMedia(stream) {
     var source = audioContext.createMediaStreamSource(stream);
@@ -36,12 +36,13 @@ function StartgetUserMedia(stream) {
     }
 
     //create VAD
-    var vad = new VAD(options);
+    new VAD(options);
 }
 
 function StartMicrophone() {
     recorder = new MediaRecorder(mediaStream)
-    
+    var blob;
+
     let chunks = [];
     recorder.ondataavailable = function(e) {
         chunks.push(e.data);
@@ -49,35 +50,32 @@ function StartMicrophone() {
     
     recorder.start()
 
-    //  send the whole damn binary
-    recorder.onstop = (e) => {
-        const blob = new Blob(chunks, { 'type' : 'audio/wav' });
-        chunks = [];
+    setInterval(() => {
+        blob = new Blob(chunks, {type: "audio/wav"});
         socket.send(blob);
-    }
+    }, 500);
 }
 
 const recordCmd = () => {
     // animation
-    recording_indicator.classList.remove("rotating-circle-norm");
-    recording_indicator.classList.add("rotating-circle-record");
+    // recording_indicator.classList.remove("rotating-circle-norm");
+    // recording_indicator.classList.add("rotating-circle-record");
 
     StartMicrophone();
 
-    // record 5s of command
-    //TODO: this needs to be fine tuned
-    setTimeout(() => {
-        // remove animation
-        recording_indicator.classList.remove("rotating-circle-record");
-        recording_indicator.classList.add("rotating-circle-record-stop");
+//     // record 5s of command
+//     //TODO: this needs to be fine tuned
+//     setTimeout(() => {
+//         // remove animation
+//         recording_indicator.classList.remove("rotating-circle-record");
+//         recording_indicator.classList.add("rotating-circle-record-stop");
         
-        recorder.stop();
 
-        setTimeout(() => {
-            recording_indicator.classList.add("rotating-circle-norm");
-            recording_indicator.classList.remove("rotating-circle-record-stop");
-        }, 1000);
-    }, 6000);
+//         setTimeout(() => {
+//             recording_indicator.classList.add("rotating-circle-norm");
+//             recording_indicator.classList.remove("rotating-circle-record-stop");
+//         }, 1000);
+//     }, 6000);
 }
 
 export { recordCmd }

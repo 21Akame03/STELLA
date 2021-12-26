@@ -5,33 +5,6 @@ import './network';
 import {recordCmd} from './record-speech';
 import { socket } from './network';
 
-// let voiceProb = 0.0;
-
-
-// //start media stream
-// navigator.mediaDevices.getUserMedia (
-//     // constraints - only audio needed for this app
-//     {
-//         audio: {sampleRate: 16000, channelCount: 1}
-//     })
-//     // Success callback
-//     .then(function(stream) {
-//         recorder = new MediaRecorder(stream)
-//     })
-//     // Error callback
-//     .catch(function(err) {
-//         console.log('The following getUserMedia error occurred: ' + err);
-//     }
-// );
-
-
-// // voice activity detection
-// function cobraCallback(voiceProbability) {
-//     //update global variable
-//     voiceProb = voiceProbability;
-
-// }
-
 // check if recording should be allowed
 function keywordDetectionCallBack(keyword) {
     // allow a recording session
