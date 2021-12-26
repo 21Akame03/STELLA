@@ -1,5 +1,7 @@
 import { io } from 'socket.io-client';
+import { StartRecording, StopRecording } from './audio-setup';
 import speak from './Speech_synt';
+
 
 // let socket = new WebSocket("ws://127.0.0.1:8000");
 
@@ -24,12 +26,12 @@ const socket = io("ws://localhost:8000");
 socket.on("connect", () => {
 
     console.log("connected")
-    // either with send()
-    socket.send("Hello!");
+    StartRecording()
 });
 
 socket.on('disconnect', (e) => {
     console.log(`Disconnected: ${e}`);
+    StopRecording();
 })
 
 export { socket }

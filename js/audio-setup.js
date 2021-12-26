@@ -109,3 +109,5 @@ function StopRecording() {
         StopMicrophone();
     }
 }
+
+export { StartRecording, StopRecording }
