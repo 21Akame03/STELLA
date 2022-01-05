@@ -1,37 +1,18 @@
-import { io } from 'socket.io-client';
-import { StartRecording, StopRecording } from './audio-setup';
-import speak from './Speech_synt';
+// import { io } from 'socket.io-client';
+// import { StartRecording, StopRecording } from './audio-setup';
+// import speak from './Speech_synt';
 
+// const socket = io("ws://localhost:8000");
 
-// let socket = new WebSocket("ws://127.0.0.1:8000");
+// socket.on("connect", () => {
 
-// socket.addEventListener('open', (event) => {
-//     socket.send(JSON.stringify({event: "Connection"}));
+//     console.log("connected")
+//     StartRecording()
 // });
 
-// socket.addEventListener('close', (event) => {
-//     console.log("disconnected")
+// socket.on('disconnect', (e) => {
+//     console.log(`Disconnected: ${e}`);
+//     StopRecording();
 // })
 
-// socket.addEventListener("message", (event) => {
-//     let data = event.data;
-//     console.log(data)
-
-//     // if bytes data then its voice
-//     if (data instanceof Blob) {speak(data)};
-// })
-
-const socket = io("ws://localhost:8000");
-
-socket.on("connect", () => {
-
-    console.log("connected")
-    StartRecording()
-});
-
-socket.on('disconnect', (e) => {
-    console.log(`Disconnected: ${e}`);
-    StopRecording();
-})
-
-export { socket }
+// export { socket }

@@ -9,14 +9,20 @@
         <section class="w-full h-full fixed polka-dots-bg"></section>
         <audio class="hidden" id="audio"></audio>
 
-        <div id="bg" class="z-10">
+        <!-- camera view -->
+        <div class="h-20 w-40 absolute top-10 right-10 hover:h-2/5 hover:w-2/5 hover:bg-yellow-100 hover:outline hover:outline-sky-700 z-20 duration-500 container">
+          <video class="input_video absolute w-full h-full"></video>
+          <canvas class="output_canvas absolute w-full h-full"></canvas>
+        </div>
+
+        <div id="bg" class="z-10 grid grid-cols-3 grid-rows-1">
           <h2 id="Name" style="font-family: 'Courier New', Courier, monospace;">S.T.E.L.L.A</h2>
 
-            <!-- I was too lazy and tired so i copied this work but im not a plagiarist so therefore -->
+            <!-- I was too lazy and tired, so i copied this work and made some adjustments but im not a plagiarist so therefore -->
             <!-- Find original here: https://codepen.io/fesuydev/pen/EZzxJK -->
 
-            <div style="max-width: 250px;text-align:center;margin: 0px auto;padding: 0%; display: grid;">
-              <svg id="jarvis-like" viewbox="0 -100 200 400 ">
+            <div style="text-align:center;margin: 0px auto;padding: 0%; display: grid;">
+              <svg id="jarvis-like" viewbox="0 -100 210 400" class="left-2 duration-500">
                 <defs>
                   <filter id="light-circle">
                     <feGaussianBlur result="blurred" in="SourceGraphic" stdDeviation="1" />
@@ -39,12 +45,16 @@
 
                 <circle cx="105" cy="105" r="40" style="fill: transparent; stroke: #64E6EF; stroke-width: 2"></circle>
                 triangle primary
-                <path d="M 105 120 L 130 95 L 80 95 z" style="fill: #D1FBFC; stroke: #B4F6FB; stroke-width:5; z-index: 0;" class="triangle"></path>
+                <path d="M 105 120 L 130 95 L 80 95 z" style=" stroke-width:5; z-index: 0;" id="triangle" class="stroke-sky-300 fill-sky-300"></path>
               </svg>
-             </div>
+            </div>
+
+            <div>
+
+            </div>
         </div>
 
-        <script src="./assets/vad.js"></script>
-        <script src="./js/wake-word.js" type="module"></script>
+        <script src="js/facemesh.js" type="module"></script>
+        
     </body>
 </html>
