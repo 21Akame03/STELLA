@@ -1,60 +1,13 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>STELLA</title>
-        <link rel="stylesheet" href="index.css">
-    </head>
-    <body>
-        <section class="animated-bg"></section>
-        <section class="w-full h-full fixed polka-dots-bg"></section>
-        <audio class="hidden" id="audio"></audio>
-
-        <!-- camera view -->
-        <div class="h-20 w-40 absolute top-10 right-10 hover:h-2/5 hover:w-2/5 hover:bg-yellow-100 hover:outline hover:outline-sky-700 z-20 duration-500 container">
-          <video class="input_video absolute w-full h-full"></video>
-          <canvas class="output_canvas absolute w-full h-full"></canvas>
-        </div>
-
-        <div id="bg" class="z-10 grid grid-cols-3 grid-rows-1">
-          <h2 id="Name" style="font-family: 'Courier New', Courier, monospace;">S.T.E.L.L.A</h2>
-
-            <!-- I was too lazy and tired, so i copied this work and made some adjustments but im not a plagiarist so therefore -->
-            <!-- Find original here: https://codepen.io/fesuydev/pen/EZzxJK -->
-
-            <div style="text-align:center;margin: 0px auto;padding: 0%; display: grid;">
-              <svg id="jarvis-like" viewbox="0 -100 210 400" class="left-2 duration-500">
-                <defs>
-                  <filter id="light-circle">
-                    <feGaussianBlur result="blurred" in="SourceGraphic" stdDeviation="1" />
-                  </filter>
-                </defs>
-                <!-- circle outer -->
-                <circle cx="105" cy="105" r="100" style="fill: transparent; stroke-width: 2; stroke-dasharray: 50, 5" class="rotating-circle-norm duration-300" id="recording">
-                </circle>
-                <circle cx="105" cy="105" r="95" style="fill: transparent;stroke: #64E6EF;stroke-width: 1.5; stroke-dasharray: 0"></circle>
-                <!-- circle dash cool :D -->
-                <circle cx="105" cy="105" r="80" style="fill: transparent; stroke: #B4F6FB; stroke-width: 10; stroke-dasharray: 1,3" class="mid-circle">
-                </circle>
-
-                <circle cx="105" cy="105" r="60" style="fill: transparent; stroke: #B4F6FB; stroke-width: 1.5; stroke-dasharray: 50, 10" class="inner-circle">
-                </circle>
-
-                <!-- circle inner -->
-                <!-- change color on speech synthesis -->
-                <circle cx="105" cy="105" r="50" style="fill: transparent; stroke-width: 15;filter: url(#light-circle);" class="duration-100  stroke-zinc-500 " id="indicator"></circle>
-
-                <circle cx="105" cy="105" r="40" style="fill: transparent; stroke: #64E6EF; stroke-width: 2"></circle>
-                triangle primary
-                <path d="M 105 120 L 130 95 L 80 95 z" style=" stroke-width:5; z-index: 0;" id="triangle" class="stroke-sky-300 fill-sky-300"></path>
-              </svg>
-            </div>
-
-            <div>
-
-            </div>
-        </div>
-
-        <script src="js/facemesh.js" type="module"></script>
-        
-    </body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
