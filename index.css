@@ -26,6 +26,7 @@ body{
 #Name {
   position: fixed;
   bottom: 2rem;
+  left: 2rem;
   padding-left: 1rem;
   padding-top: 1rem;
   color: #B4F6FB;
@@ -124,6 +125,12 @@ body{
   /* right: 50%;
   top: 50%;
   transform: translate(50%, -50%); */
+}
+
+.centered {
+  right: 50%;
+  top: 50%;
+  transform: translate(50%, -50%);
 }
 
 .polka-dots-bg {
