@@ -1,18 +1,23 @@
-// import { io } from 'socket.io-client';
-// import { StartRecording, StopRecording } from './audio-setup';
-// import speak from './Speech_synt';
+import { io } from 'socket.io-client';
+import { VAD_anim_start, VAD_anim_end } from './animations';
+const socket = io("http://localhost:8000");
 
-// const socket = io("ws://localhost:8000");
 
-// socket.on("connect", () => {
+socket.on("connect", () => {
+    console.log("connected")
+    VAD_anim_start()
+});
 
-//     console.log("connected")
-//     StartRecording()
+// socket.on("VAD_STATUS", (args) => {
+//     if (args.active == true) {
+//         VAD_anim_start();
+//     } else if (args.active == false) {
+//         VAD_anim_end();
+//     }
 // });
 
-// socket.on('disconnect', (e) => {
-//     console.log(`Disconnected: ${e}`);
-//     StopRecording();
-// })
+socket.on('disconnect', (e) => {
+    console.log(`Disconnected: ${e}`);
+})
 
-// export { socket }
+export { socket }
