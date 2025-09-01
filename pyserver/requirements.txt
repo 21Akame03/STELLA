@@ -1,0 +1,6 @@
+python-socketio==5.11.2
+uvicorn==0.30.1
+fastapi==0.112.0
+ollama
+piper-tts
+

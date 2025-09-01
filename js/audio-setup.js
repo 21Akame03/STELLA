@@ -1,112 +1,181 @@
-// import { socket } from "./network";
+// Audio capture, downsampling, buffering, and NLP clip window management.
 
-// var audioContext;
-// var mediaStream;
-// var mediaStreamSource;
-// var processor;
+const PV_SAMPLE_RATE = 16000;
+const FRAME_LENGTH = 4096; // input frame size to ScriptProcessor
 
-// var recording;
-// var recordingInterval;
-// var recordingstart;
-// var recordingtime;
+let audioContext;
+let mediaStream;
+let mediaStreamSource;
+let processor;
+let downsampler;
 
-// var DOWNSAMPLING_WORKER = 'js/downsampler/downsampling_worker.js'
+// Callbacks injected by the network layer
+let onFrameEmit = null; // function(buffer: ArrayBuffer)
+let onClipReady = null; // function({ sampleRate, pcm: ArrayBuffer })
 
-// function createAudioProcessor(audioContext, audioSource) {
-//     let processor = audioContext.createScriptProcessor(4096, 1, 1);
+// Ring buffer stores recent Int16Array frames of downsampled audio
+const RING_BUFFER_MAX_SECS = 3; // keep ~3s pre-roll
+let ringBuffer = [];
+let ringBufferSamples = 0;
 
-//     const sampleRate = audioSource.context.sampleRate;
+// NLP capture window state
+let captureActive = false;
+let captureSamplesTarget = PV_SAMPLE_RATE * 10; // 10 seconds
+let captureSamplesCollected = 0;
+let captureFrames = [];
+let captureTimer = null;
 
-//     let downsampler = new Worker(DOWNSAMPLING_WORKER);
-//     downsampler.postMessage({command: "init", inputSampleRate: sampleRate});
-//     downsampler.onmessage = (e) => {
-//         if (socket.connected) {
-//             socket.emit('stream-data', e.data.buffer);
-//         }
-//     }
+function initAudio({ onFrame, onClip }) {
+  onFrameEmit = onFrame;
+  onClipReady = onClip;
+}
 
-//     processor.onaudioprocess = (event) => {
-//         var data = event.inputBuffer.getChannelData(0);
-//         downsampler.postMessage({command: "process", inputFrame: data})
-//     }
+function createAudioProcessor(audioCtx, audioSource) {
+  const node = audioCtx.createScriptProcessor(FRAME_LENGTH, 1, 1);
+  const inputSampleRate = audioSource.context.sampleRate;
 
-//     processor.shutdown = () => {
-//         processor.disconnect();
-//         this.onaudioprocess = null;
-//     }
+  // Vite-friendly worker URL
+  const workerUrl = new URL('./downsampler/downsampling_worker.js', import.meta.url);
+  downsampler = new Worker(workerUrl);
+  downsampler.postMessage({ command: 'init', inputSampleRate });
 
-//     processor.connect(audioContext.destination);
-//     return processor;
-// }
+  downsampler.onmessage = (e) => {
+    const frame = e.data; // Int16Array at 16kHz
+    // Emit realtime stream for server-side VAD/wakeword
+    if (onFrameEmit) onFrameEmit(frame.buffer);
 
-// function StartMicrophone() {
-//     audioContext = new AudioContext();
+    // Maintain ring buffer (~3s)
+    pushToRingBuffer(frame);
 
-//     const success = (stream) => {
-//         console.log('recording');
-//         mediaStream = stream;
-//         mediaStreamSource = audioContext.createMediaStreamSource(stream);
-//         processor = createAudioProcessor(audioContext, mediaStreamSource);
-//         mediaStreamSource.connect(processor);
-//     }
+    // If capture window active, accumulate until target reached
+    if (captureActive) appendToCapture(frame);
+  };
 
-//     const fail = (e) => {
-//         console.error('Recording failure: ', e);
-//     }
+  node.onaudioprocess = (event) => {
+    const data = event.inputBuffer.getChannelData(0);
+    downsampler.postMessage({ command: 'process', inputFrame: data });
+  };
 
-//     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-//         navigator.mediaDevices.getUserMedia({
-//             video: false,
-//             audio: {sampleRate: 16000, channelCount: 1}
-//         })
-//         .then(success)
-//         .catch(fail);
-//     } else {
-//         navigator.getUserMedia({
-//             video: false,
-//             audio: true
-//         }, success, fail);
-//     }
-// }
+  node.shutdown = () => {
+    node.disconnect();
+    node.onaudioprocess = null;
+  };
 
-// function StopMicrophone() {
-//     if (mediaStream) {
-//         mediaStream.getTracks()[0].stop();
-//     }
-//     if (mediaStreamSource) {
-//         mediaStreamSource.disconnect();
-//     }
-//     if (processor) {
-//         processor.shutdown();
-//     }
-//     if (audioContext) {
-//         audioContext.close();
-//     }
-// }
+  node.connect(audioCtx.destination);
+  return node;
+}
 
-// function StartRecording(e) {
-//     if (!recording) {
-//         recordingInterval = setInterval(() => {
-//             let recordingtime = new Date().getTime() - recordingstart;
-//         }, 100);
+function pushToRingBuffer(int16Frame) {
+  ringBuffer.push(int16Frame);
+  ringBufferSamples += int16Frame.length;
+  const maxSamples = PV_SAMPLE_RATE * RING_BUFFER_MAX_SECS;
+  while (ringBufferSamples > maxSamples && ringBuffer.length) {
+    const old = ringBuffer.shift();
+    ringBufferSamples -= old.length;
+  }
+}
 
-//         recording = true;
-//         recordingstart = new Date().getTime();
-//         recordingtime = 0;
+function appendToCapture(int16Frame) {
+  captureFrames.push(int16Frame);
+  captureSamplesCollected += int16Frame.length;
+  if (captureSamplesCollected >= captureSamplesTarget) finalizeCapture();
+}
 
-//         StartMicrophone();
-//     }
-// }
+function beginNlpWindow({ preRollMs = 1500, durationMs = 10000 } = {}) {
+  // Restart any existing window
+  clearTimeout(captureTimer);
+  captureActive = false;
+  captureFrames = [];
+  captureSamplesCollected = 0;
+  captureSamplesTarget = Math.floor((PV_SAMPLE_RATE * durationMs) / 1000);
 
-// function StopRecording() {
-//     if (recording) {
-//         if (socket.connected) {
-//             socket.emit('stream-reset');
-//         }
-//         clearInterval(recordingInterval);
-//         recording = false;
-//         StopMicrophone();
-//     }
-// }
+  // Seed with pre-roll from ring buffer
+  const preRollSamples = Math.floor((PV_SAMPLE_RATE * preRollMs) / 1000);
+  let seeded = 0;
+  // Walk ringBuffer from the end backwards to collect recent frames
+  for (let i = ringBuffer.length - 1; i >= 0 && seeded < preRollSamples; i--) {
+    const fr = ringBuffer[i];
+    captureFrames.unshift(fr);
+    seeded += fr.length;
+  }
 
-// export { StartRecording, StopRecording, mediaStream }
+  captureActive = true;
+  captureTimer = setTimeout(() => finalizeCapture(), durationMs);
+}
+
+function finalizeCapture() {
+  if (!captureActive) return;
+  captureActive = false;
+  clearTimeout(captureTimer);
+
+  // Flatten frames into a single Int16Array
+  let total = 0;
+  for (const fr of captureFrames) total += fr.length;
+  const merged = new Int16Array(total);
+  let offset = 0;
+  for (const fr of captureFrames) {
+    merged.set(fr, offset);
+    offset += fr.length;
+  }
+
+  captureFrames = [];
+  captureSamplesCollected = 0;
+
+  if (onClipReady) onClipReady({ sampleRate: PV_SAMPLE_RATE, pcm: merged.buffer });
+}
+
+function StartMicrophone() {
+  if (audioContext) return; // already started
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+  const success = (stream) => {
+    mediaStream = stream;
+    mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    processor = createAudioProcessor(audioContext, mediaStreamSource);
+    mediaStreamSource.connect(processor);
+  };
+
+  const fail = (e) => {
+    console.error('Recording failure:', e);
+  };
+
+  const constraints = { video: false, audio: { channelCount: 1 } };
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia(constraints).then(success).catch(fail);
+  } else {
+    // Legacy
+    navigator.getUserMedia({ video: false, audio: true }, success, fail);
+  }
+}
+
+function StopMicrophone() {
+  if (mediaStream) {
+    try { mediaStream.getTracks().forEach(t => t.stop()); } catch {}
+  }
+  if (mediaStreamSource) {
+    try { mediaStreamSource.disconnect(); } catch {}
+  }
+  if (processor) {
+    try { processor.shutdown(); } catch {}
+  }
+  if (downsampler) {
+    try { downsampler.postMessage({ command: 'reset' }); downsampler.terminate(); } catch {}
+  }
+  if (audioContext) {
+    try { audioContext.close(); } catch {}
+  }
+  audioContext = undefined;
+  mediaStream = undefined;
+  mediaStreamSource = undefined;
+  processor = undefined;
+  downsampler = undefined;
+  ringBuffer = [];
+  ringBufferSamples = 0;
+  captureActive = false;
+  captureFrames = [];
+  captureSamplesCollected = 0;
+  clearTimeout(captureTimer);
+  captureTimer = null;
+}
+
+export { initAudio, StartMicrophone, StopMicrophone, beginNlpWindow };

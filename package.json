@@ -4,13 +4,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node server/index.js"
   },
   "devDependencies": {
     "tailwindcss": "^3.0.1",
     "vite": "^2.7.0"
   },
   "dependencies": {
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "@mediapipe/camera_utils": "^0.3.1640029074",
     "@mediapipe/control_utils": "^0.6.1629159505",
     "@mediapipe/drawing_utils": "^0.3.1620248257",
